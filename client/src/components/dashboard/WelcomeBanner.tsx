@@ -1,6 +1,6 @@
 import { Download, Calendar, LineChart, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import dashboardImage from "@assets/SaveInsta.App_455647383_866013168292275_7988401194850199636_n.jpg";
+import dashboardImage from "@assets/SaveInsta.App_455810119_1678760166018800_270444393523944411_n.jpg";
 
 interface WelcomeBannerProps {
   userName: string;
@@ -50,10 +50,10 @@ export default function WelcomeBanner({ userName, onExportReport }: WelcomeBanne
         <div className="relative">
           <img 
             src={dashboardImage}
-            alt="Medical dashboard" 
-            className="h-60 w-auto rounded-lg shadow-2xl object-cover border-4 border-white/20"
+            alt="Medical dashboard with health analytics" 
+            className="h-60 w-auto rounded-lg shadow-2xl object-contain border-4 border-white/20"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-700/20 to-transparent rounded-lg"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-700/10 to-transparent rounded-lg"></div>
           
           {/* Subtle reflective effect */}
           <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-4/5 h-8 bg-black/20 blur-xl rounded-full"></div>
