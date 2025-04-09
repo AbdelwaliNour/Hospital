@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ export default function AppointmentScheduler() {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [calendarDates, setCalendarDates] = useState<Date[]>([]);
   const queryClient = useQueryClient();
+  const initializedRef = useRef(false);
 
   const { data: doctors = [] } = useQuery<Doctor[]>({
     queryKey: ['/api/doctors'],
@@ -46,12 +47,16 @@ export default function AppointmentScheduler() {
     }
     
     setCalendarDates(dates);
-    
-    // Set first doctor as default
-    if (doctors.length > 0 && !selectedDoctor) {
+  }, []);
+  
+  // Separate effect for setting the first doctor
+  useEffect(() => {
+    // Set first doctor as default only once
+    if (doctors.length > 0 && !initializedRef.current) {
+      initializedRef.current = true;
       setSelectedDoctor(doctors[0]);
     }
-  }, [doctors, selectedDoctor]);
+  }, [doctors]);
 
   const filteredTimeSlots = selectedDoctor?.availableTimeSlots.find(
     slot => slot.day === format(selectedDate, 'yyyy-MM-dd')

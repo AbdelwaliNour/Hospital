@@ -170,13 +170,15 @@ export default function Analytics() {
       {/* Chart Section */}
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-          <Tabs defaultValue={chartTab} onValueChange={setChartTab} className="w-full sm:w-auto">
-            <TabsList>
-              <TabsTrigger value="visits">Patient Visits</TabsTrigger>
-              <TabsTrigger value="departments">Department Distribution</TabsTrigger>
-              <TabsTrigger value="conditions">Medical Conditions</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="w-full sm:w-auto">
+            <Tabs defaultValue={chartTab} onValueChange={setChartTab}>
+              <TabsList>
+                <TabsTrigger value="visits">Patient Visits</TabsTrigger>
+                <TabsTrigger value="departments">Department Distribution</TabsTrigger>
+                <TabsTrigger value="conditions">Medical Conditions</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
           
           <Select defaultValue={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger className="w-[180px]">
@@ -193,79 +195,81 @@ export default function Analytics() {
         
         <div className="p-6">
           <div className="h-[400px]">
-            <TabsContent value="visits" className="h-full mt-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthlyVisits} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="visits" stroke="#1366AE" strokeWidth={2} activeDot={{ r: 8 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </TabsContent>
-            
-            <TabsContent value="departments" className="h-full mt-0">
-              <div className="flex flex-col md:flex-row h-full">
-                <div className="w-full md:w-1/2 h-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
-                      <Pie
-                        data={departmentVisits}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        outerRadius={120}
-                        fill="#8884d8"
-                        dataKey="value"
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      >
-                        {departmentVisits.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value, name) => [`${value} visits`, name]} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                
-                <div className="w-full md:w-1/2 h-full flex flex-col justify-center">
-                  <h3 className="text-lg font-medium mb-4">Department Visits Breakdown</h3>
-                  <div className="space-y-2">
-                    {departmentVisits.map((dept, index) => (
-                      <div key={index} className="flex items-center">
-                        <span 
-                          className="w-4 h-4 rounded-full mr-2" 
-                          style={{ backgroundColor: dept.color }}
-                        ></span>
-                        <span className="flex-1">{dept.name}</span>
-                        <span className="font-medium">{dept.value} visits</span>
-                      </div>
-                    ))}
+            <Tabs defaultValue={chartTab} value={chartTab}>
+              <TabsContent value="visits" className="h-full mt-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={monthlyVisits} margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="visits" stroke="#1366AE" strokeWidth={2} activeDot={{ r: 8 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </TabsContent>
+              
+              <TabsContent value="departments" className="h-full mt-0">
+                <div className="flex flex-col md:flex-row h-full">
+                  <div className="w-full md:w-1/2 h-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart margin={{ top: 20, right: 30, left: 20, bottom: 10 }}>
+                        <Pie
+                          data={departmentVisits}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={120}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {departmentVisits.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value, name) => [`${value} visits`, name]} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  <div className="w-full md:w-1/2 h-full flex flex-col justify-center">
+                    <h3 className="text-lg font-medium mb-4">Department Visits Breakdown</h3>
+                    <div className="space-y-2">
+                      {departmentVisits.map((dept, index) => (
+                        <div key={index} className="flex items-center">
+                          <span 
+                            className="w-4 h-4 rounded-full mr-2" 
+                            style={{ backgroundColor: dept.color }}
+                          ></span>
+                          <span className="flex-1">{dept.name}</span>
+                          <span className="font-medium">{dept.value} visits</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="conditions" className="h-full mt-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={conditionData} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="name" 
-                    angle={-45} 
-                    textAnchor="end" 
-                    height={70} 
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" name="Occurrences" fill="#4A90E2" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </TabsContent>
+              </TabsContent>
+              
+              <TabsContent value="conditions" className="h-full mt-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={conditionData} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis 
+                      dataKey="name" 
+                      angle={-45} 
+                      textAnchor="end" 
+                      height={70} 
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="value" name="Occurrences" fill="#4A90E2" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
