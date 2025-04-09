@@ -7,6 +7,8 @@ import {
   visits, type Visit, type InsertVisit,
   healthMetrics, type HealthMetric, type InsertHealthMetric
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -521,4 +523,136 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // Users
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+  
+  // Doctors
+  async getDoctors(): Promise<Doctor[]> {
+    return await db.select().from(doctors);
+  }
+  
+  async getDoctor(id: number): Promise<Doctor | undefined> {
+    const [doctor] = await db.select().from(doctors).where(eq(doctors.id, id));
+    return doctor;
+  }
+  
+  async createDoctor(insertDoctor: InsertDoctor): Promise<Doctor> {
+    const [doctor] = await db.insert(doctors).values(insertDoctor).returning();
+    return doctor;
+  }
+  
+  // Patients
+  async getPatients(): Promise<Patient[]> {
+    return await db.select().from(patients);
+  }
+  
+  async getPatient(id: number): Promise<Patient | undefined> {
+    const [patient] = await db.select().from(patients).where(eq(patients.id, id));
+    return patient;
+  }
+  
+  async createPatient(insertPatient: InsertPatient): Promise<Patient> {
+    const [patient] = await db.insert(patients).values(insertPatient).returning();
+    return patient;
+  }
+  
+  // Appointments
+  async getAppointments(): Promise<Appointment[]> {
+    return await db.select().from(appointments);
+  }
+  
+  async getAppointment(id: number): Promise<Appointment | undefined> {
+    const [appointment] = await db.select().from(appointments).where(eq(appointments.id, id));
+    return appointment;
+  }
+  
+  async getAppointmentsByDoctor(doctorId: number): Promise<Appointment[]> {
+    return await db.select().from(appointments).where(eq(appointments.doctorId, doctorId));
+  }
+  
+  async getAppointmentsByPatient(patientId: number): Promise<Appointment[]> {
+    return await db.select().from(appointments).where(eq(appointments.patientId, patientId));
+  }
+  
+  async createAppointment(insertAppointment: InsertAppointment): Promise<Appointment> {
+    const [appointment] = await db.insert(appointments).values(insertAppointment).returning();
+    return appointment;
+  }
+  
+  async updateAppointment(id: number, appointmentUpdate: Partial<Appointment>): Promise<Appointment | undefined> {
+    const [updated] = await db.update(appointments)
+      .set(appointmentUpdate)
+      .where(eq(appointments.id, id))
+      .returning();
+    return updated;
+  }
+  
+  async deleteAppointment(id: number): Promise<boolean> {
+    const result = await db.delete(appointments).where(eq(appointments.id, id));
+    return true; // In Drizzle, delete doesn't return the count directly
+  }
+  
+  // Departments
+  async getDepartments(): Promise<Department[]> {
+    return await db.select().from(departments);
+  }
+  
+  async getDepartment(id: number): Promise<Department | undefined> {
+    const [department] = await db.select().from(departments).where(eq(departments.id, id));
+    return department;
+  }
+  
+  async createDepartment(insertDepartment: InsertDepartment): Promise<Department> {
+    const [department] = await db.insert(departments).values(insertDepartment).returning();
+    return department;
+  }
+  
+  // Visits
+  async getVisits(): Promise<Visit[]> {
+    return await db.select().from(visits);
+  }
+  
+  async getVisit(id: number): Promise<Visit | undefined> {
+    const [visit] = await db.select().from(visits).where(eq(visits.id, id));
+    return visit;
+  }
+  
+  async getVisitsByDoctor(doctorId: number): Promise<Visit[]> {
+    return await db.select().from(visits).where(eq(visits.doctorId, doctorId));
+  }
+  
+  async getVisitsByPatient(patientId: number): Promise<Visit[]> {
+    return await db.select().from(visits).where(eq(visits.patientId, patientId));
+  }
+  
+  async createVisit(insertVisit: InsertVisit): Promise<Visit> {
+    const [visit] = await db.insert(visits).values(insertVisit).returning();
+    return visit;
+  }
+  
+  // Health Metrics
+  async getHealthMetrics(patientId: number): Promise<HealthMetric[]> {
+    return await db.select().from(healthMetrics).where(eq(healthMetrics.patientId, patientId));
+  }
+  
+  async createHealthMetric(insertMetric: InsertHealthMetric): Promise<HealthMetric> {
+    const [metric] = await db.insert(healthMetrics).values(insertMetric).returning();
+    return metric;
+  }
+}
+
+export const storage = new DatabaseStorage();

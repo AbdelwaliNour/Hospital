@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, timestamp, json, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 // User schema for authentication
 export const users = pgTable("users", {
@@ -54,14 +55,25 @@ export const insertPatientSchema = createInsertSchema(patients).omit({
 // Appointment schema
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
-  patientId: integer("patient_id").notNull(),
-  doctorId: integer("doctor_id").notNull(),
+  patientId: integer("patient_id").notNull().references(() => patients.id),
+  doctorId: integer("doctor_id").notNull().references(() => doctors.id),
   date: timestamp("date").notNull(),
   time: text("time").notNull(),
   status: text("status").notNull(),
   condition: text("condition"),
   notes: text("notes"),
 });
+
+export const appointmentsRelations = relations(appointments, ({ one }) => ({
+  patient: one(patients, {
+    fields: [appointments.patientId],
+    references: [patients.id],
+  }),
+  doctor: one(doctors, {
+    fields: [appointments.doctorId],
+    references: [doctors.id],
+  }),
+}));
 
 export const insertAppointmentSchema = createInsertSchema(appointments).omit({
   id: true,
@@ -83,13 +95,24 @@ export const insertDepartmentSchema = createInsertSchema(departments).omit({
 // Visit schema
 export const visits = pgTable("visits", {
   id: serial("id").primaryKey(),
-  patientId: integer("patient_id").notNull(),
-  doctorId: integer("doctor_id").notNull(),
+  patientId: integer("patient_id").notNull().references(() => patients.id),
+  doctorId: integer("doctor_id").notNull().references(() => doctors.id),
   date: timestamp("date").notNull(),
   time: text("time").notNull(),
   condition: text("condition").notNull(),
   notes: text("notes"),
 });
+
+export const visitsRelations = relations(visits, ({ one }) => ({
+  patient: one(patients, {
+    fields: [visits.patientId],
+    references: [patients.id],
+  }),
+  doctor: one(doctors, {
+    fields: [visits.doctorId],
+    references: [doctors.id],
+  }),
+}));
 
 export const insertVisitSchema = createInsertSchema(visits).omit({
   id: true,
@@ -98,7 +121,7 @@ export const insertVisitSchema = createInsertSchema(visits).omit({
 // Health Metrics schema
 export const healthMetrics = pgTable("health_metrics", {
   id: serial("id").primaryKey(),
-  patientId: integer("patient_id").notNull(),
+  patientId: integer("patient_id").notNull().references(() => patients.id),
   timestamp: timestamp("timestamp").notNull(),
   heartRate: integer("heart_rate"),
   sleepHours: integer("sleep_hours"),
@@ -106,6 +129,13 @@ export const healthMetrics = pgTable("health_metrics", {
   temperature: integer("temperature"),
   weight: integer("weight"),
 });
+
+export const healthMetricsRelations = relations(healthMetrics, ({ one }) => ({
+  patient: one(patients, {
+    fields: [healthMetrics.patientId],
+    references: [patients.id],
+  }),
+}));
 
 export const insertHealthMetricSchema = createInsertSchema(healthMetrics).omit({
   id: true,
@@ -132,3 +162,15 @@ export type InsertVisit = z.infer<typeof insertVisitSchema>;
 
 export type HealthMetric = typeof healthMetrics.$inferSelect;
 export type InsertHealthMetric = z.infer<typeof insertHealthMetricSchema>;
+
+// Define relations for doctors and patients after all tables are defined
+export const doctorsRelations = relations(doctors, ({ many }) => ({
+  appointments: many(appointments),
+  visits: many(visits),
+}));
+
+export const patientsRelations = relations(patients, ({ many }) => ({
+  appointments: many(appointments),
+  visits: many(visits),
+  healthMetrics: many(healthMetrics),
+}));
