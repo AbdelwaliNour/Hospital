@@ -38,6 +38,7 @@ export default function Staff() {
   // Filter staff by department and search term
   const filteredStaff = staff.filter(doctor => {
     const matchesDepartment = !departmentFilter || 
+      departmentFilter === "all" ||
       doctor.specialty.toLowerCase() === departmentFilter.toLowerCase();
     
     const matchesSearch = !searchTerm || 
@@ -116,7 +117,7 @@ export default function Staff() {
               <SelectValue placeholder="Filter by department" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Departments</SelectItem>
+              <SelectItem value="all">All Departments</SelectItem>
               {departments.map((dept) => (
                 <SelectItem key={dept.id} value={dept.name}>
                   {dept.name}
