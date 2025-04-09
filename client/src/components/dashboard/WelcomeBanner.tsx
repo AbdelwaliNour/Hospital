@@ -1,6 +1,5 @@
 import { Download, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import healthcareImage from "@assets/SaveInsta.App_455647383_866013168292275_7988401194850199636_n.jpg";
 
 interface WelcomeBannerProps {
   userName: string;
@@ -37,7 +36,7 @@ export default function WelcomeBanner({ userName, onExportReport }: WelcomeBanne
       <div className="hidden lg:flex items-center justify-center">
         <div className="relative">
           <img 
-            src={healthcareImage} 
+            src="https://placehold.co/600x400/1366AE/FFFFFF.png?text=Medical+Dashboard" 
             alt="Medical dashboard" 
             className="h-52 rounded-lg shadow-lg object-cover"
           />
