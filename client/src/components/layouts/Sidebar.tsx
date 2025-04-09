@@ -39,16 +39,16 @@ export default function Sidebar() {
       {/* Navigation Links */}
       <div className="flex-1 flex flex-col gap-2 px-2 py-4 overflow-y-auto">
         {navItems.map((item) => (
-          <Link key={item.href} href={item.href}>
-            <a
-              className={cn(
-                "flex items-center justify-center lg:justify-start px-2 py-3 rounded-lg text-white hover:bg-primary-light transition-colors duration-200",
-                location === item.href && "bg-primary-light"
-              )}
-            >
-              <item.icon className="h-6 w-6" />
-              <span className="ml-3 hidden lg:block">{item.label}</span>
-            </a>
+          <Link 
+            key={item.href} 
+            href={item.href}
+            className={cn(
+              "flex items-center justify-center lg:justify-start px-2 py-3 rounded-lg text-white hover:bg-primary-light transition-colors duration-200",
+              location === item.href && "bg-primary-light"
+            )}
+          >
+            <item.icon className="h-6 w-6" />
+            <span className="ml-3 hidden lg:block">{item.label}</span>
           </Link>
         ))}
       </div>
