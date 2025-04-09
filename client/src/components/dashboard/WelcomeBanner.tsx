@@ -1,6 +1,5 @@
-import { Download, Calendar, LineChart, Activity } from "lucide-react";
+import { Download, Calendar, LineChart, Activity, User, Stethoscope, Clipboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import medicalTeamImage from "../../assets/medical-team.svg";
 
 interface WelcomeBannerProps {
   userName: string;
@@ -48,12 +47,33 @@ export default function WelcomeBanner({ userName, onExportReport }: WelcomeBanne
 
       <div className="hidden md:flex items-center justify-center z-10 transform transition-all duration-500 hover:scale-105 hover:rotate-1">
         <div className="relative">
-          <img 
-            src={medicalTeamImage}
-            alt="Medical team illustration" 
-            className="h-60 w-auto rounded-lg shadow-2xl object-contain bg-white/90 border-4 border-white/20 p-2"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-700/20 to-transparent rounded-lg"></div>
+          <div className="w-64 h-64 flex items-center justify-center rounded-lg shadow-2xl overflow-hidden border-4 border-white/20">
+            {/* Medical icons group with transparent background */}
+            <div className="w-full h-full flex items-center justify-center relative">
+              {/* Background gradient circle */}
+              <div className="absolute w-48 h-48 rounded-full bg-gradient-to-r from-blue-200/20 to-transparent"></div>
+              
+              {/* Doctor icon in the center */}
+              <div className="absolute p-6 bg-white/10 backdrop-blur-sm rounded-full">
+                <User className="w-16 h-16 text-white stroke-[1.5]" />
+              </div>
+              
+              {/* Stethoscope icon */}
+              <div className="absolute top-12 right-12 p-4 bg-white/10 backdrop-blur-sm rounded-full">
+                <Stethoscope className="w-10 h-10 text-white stroke-[1.5]" />
+              </div>
+              
+              {/* Clipboard icon */}
+              <div className="absolute bottom-12 left-12 p-4 bg-white/10 backdrop-blur-sm rounded-full">
+                <Clipboard className="w-10 h-10 text-white stroke-[1.5]" />
+              </div>
+              
+              {/* Activity icon */}
+              <div className="absolute bottom-16 right-16 p-3 bg-white/10 backdrop-blur-sm rounded-full">
+                <Activity className="w-8 h-8 text-white stroke-[1.5]" />
+              </div>
+            </div>
+          </div>
           
           {/* Subtle reflective effect */}
           <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-4/5 h-8 bg-black/20 blur-xl rounded-full"></div>
